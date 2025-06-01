@@ -122,6 +122,7 @@ const ColorGenerator: React.FC = () => {
         <h1 className="text-3xl font-bold text-gray-900">
           Color Palette Generator
         </h1>
+        <p>No fuss tool to generate color palette using just one base color.</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
