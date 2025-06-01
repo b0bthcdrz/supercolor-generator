@@ -76,6 +76,55 @@ export const hslToRgb = (h: number, s: number, l: number): { r: number; g: numbe
   };
 };
 
+// Generate shades (mixing with black)
+export const generateShades = (baseColor: string, count: number): string[] => {
+  const rgb = hexToRgb(baseColor);
+  const shades: string[] = [baseColor];
+
+  for (let i = 1; i < count; i++) {
+    const factor = 1 - (i / count);
+    const r = Math.round(rgb.r * factor);
+    const g = Math.round(rgb.g * factor);
+    const b = Math.round(rgb.b * factor);
+    shades.push(rgbToHex(r, g, b));
+  }
+
+  return shades;
+};
+
+// Generate tints (mixing with white)
+export const generateTints = (baseColor: string, count: number): string[] => {
+  const rgb = hexToRgb(baseColor);
+  const tints: string[] = [baseColor];
+
+  for (let i = 1; i < count; i++) {
+    const factor = i / count;
+    const r = Math.round(rgb.r + (255 - rgb.r) * factor);
+    const g = Math.round(rgb.g + (255 - rgb.g) * factor);
+    const b = Math.round(rgb.b + (255 - rgb.b) * factor);
+    tints.push(rgbToHex(r, g, b));
+  }
+
+  return tints;
+};
+
+// Generate tones (mixing with gray)
+export const generateTones = (baseColor: string, count: number): string[] => {
+  const rgb = hexToRgb(baseColor);
+  const tones: string[] = [baseColor];
+
+  for (let i = 1; i < count; i++) {
+    const factor = i / count;
+    const grayMix = 128;
+    const r = Math.round(rgb.r + (grayMix - rgb.r) * factor);
+    const g = Math.round(rgb.g + (grayMix - rgb.g) * factor);
+    const b = Math.round(rgb.b + (grayMix - rgb.b) * factor);
+    tones.push(rgbToHex(r, g, b));
+  }
+
+  return tones;
+};
+
 // Generate a monochromatic palette from a base color
 export const generateMonochromaticPalette = (baseColor: string, count: number): string[] => {
   // Parse the base color

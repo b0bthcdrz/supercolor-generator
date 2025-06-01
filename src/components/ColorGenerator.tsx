@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Moon, Sun, Download, Sliders, Copy, RefreshCw } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { generateMonochromaticPalette, hexToRgb, rgbToHsl, hslToRgb, rgbToHex } from '../utils/colorUtils';
+import { 
+  generateMonochromaticPalette, 
+  generateShades, 
+  generateTints, 
+  generateTones,
+  hexToRgb 
+} from '../utils/colorUtils';
 import ColorSwatch from './ColorSwatch';
+
+type PaletteType = 'monochromatic' | 'shades' | 'tints' | 'tones';
 
 const ColorGenerator: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -10,16 +18,30 @@ const ColorGenerator: React.FC = () => {
   const [paletteSize, setPaletteSize] = useState(10);
   const [palette, setPalette] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [paletteType, setPaletteType] = useState<PaletteType>('monochromatic');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     generatePalette();
-  }, [baseColor, paletteSize]);
+  }, [baseColor, paletteSize, paletteType]);
 
   const generatePalette = () => {
     setIsGenerating(true);
     setTimeout(() => {
-      const newPalette = generateMonochromaticPalette(baseColor, paletteSize);
+      let newPalette: string[] = [];
+      switch (paletteType) {
+        case 'shades':
+          newPalette = generateShades(baseColor, paletteSize);
+          break;
+        case 'tints':
+          newPalette = generateTints(baseColor, paletteSize);
+          break;
+        case 'tones':
+          newPalette = generateTones(baseColor, paletteSize);
+          break;
+        default:
+          newPalette = generateMonochromaticPalette(baseColor, paletteSize);
+      }
       setPalette(newPalette);
       setIsGenerating(false);
     }, 300);
@@ -69,7 +91,7 @@ const ColorGenerator: React.FC = () => {
     ctx.fillStyle = isDarkMode ? '#F9FAFB' : '#111827';
     ctx.font = 'bold 16px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Monochromatic Palette', canvas.width / 2, padding + 16);
+    ctx.fillText(`${paletteType.charAt(0).toUpperCase() + paletteType.slice(1)} Palette`, canvas.width / 2, padding + 16);
     
     // Draw swatches
     palette.forEach((color, index) => {
@@ -91,7 +113,7 @@ const ColorGenerator: React.FC = () => {
     
     // Create download link
     const link = document.createElement('a');
-    link.download = 'monochromatic-palette.png';
+    link.download = `${paletteType}-palette.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
   };
@@ -100,7 +122,7 @@ const ColorGenerator: React.FC = () => {
     <div className="container mx-auto px-4 py-12 max-w-7xl">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white transition-colors">
-          Monochromatic Palette Generator
+          Color Palette Generator
         </h1>
         <button 
           onClick={toggleTheme}
@@ -164,10 +186,33 @@ const ColorGenerator: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <div className="mt-6">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Palette Type
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {(['monochromatic', 'shades', 'tints', 'tones'] as PaletteType[]).map((type) => (
+              <button
+                key={type}
+                onClick={() => setPaletteType(type)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  paletteType === type
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className={`mt-8 transition-opacity duration-300 ${isGenerating ? 'opacity-50' : 'opacity-100'}`}>
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Your Monochromatic Palette</h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+          {paletteType.charAt(0).toUpperCase() + paletteType.slice(1)} Palette
+        </h2>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-4 mb-8">
           {palette.map((color, index) => (
