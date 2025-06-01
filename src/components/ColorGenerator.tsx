@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Moon, Sun, Download, Sliders, Copy, RefreshCw } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
+import { Download, Sliders, RefreshCw } from 'lucide-react';
 import { 
   generateMonochromaticPalette, 
   generateShades, 
@@ -13,7 +12,6 @@ import ColorSwatch from './ColorSwatch';
 type PaletteType = 'monochromatic' | 'shades' | 'tints' | 'tones';
 
 const ColorGenerator: React.FC = () => {
-  const { isDarkMode, toggleTheme } = useTheme();
   const [baseColor, setBaseColor] = useState('#6366F1');
   const [paletteSize, setPaletteSize] = useState(10);
   const [palette, setPalette] = useState<string[]>([]);
@@ -84,11 +82,11 @@ const ColorGenerator: React.FC = () => {
     canvas.height = (swatchHeight + padding + labelHeight) * rows + padding * 2;
     
     // Fill background
-    ctx.fillStyle = isDarkMode ? '#1F2937' : '#F9FAFB';
+    ctx.fillStyle = '#F9FAFB';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     // Draw title
-    ctx.fillStyle = isDarkMode ? '#F9FAFB' : '#111827';
+    ctx.fillStyle = '#111827';
     ctx.font = 'bold 16px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(`${paletteType.charAt(0).toUpperCase() + paletteType.slice(1)} Palette`, canvas.width / 2, padding + 16);
@@ -105,7 +103,7 @@ const ColorGenerator: React.FC = () => {
       ctx.fillRect(x, y, swatchWidth, swatchHeight);
       
       // Draw color code
-      ctx.fillStyle = isDarkMode ? '#F9FAFB' : '#111827';
+      ctx.fillStyle = '#111827';
       ctx.font = '12px sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(color.toUpperCase(), x + swatchWidth / 2, y + swatchHeight + 16);
@@ -121,21 +119,15 @@ const ColorGenerator: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white transition-colors">
+        <h1 className="text-3xl font-bold text-gray-900">
           Color Palette Generator
         </h1>
-        <button 
-          onClick={toggleTheme}
-          className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-300 dark:hover:bg-gray-600"
-        >
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8 transition-all duration-300">
+      <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="baseColor" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="baseColor" className="block text-sm font-medium text-gray-700 mb-2">
               Choose Base Color
             </label>
             <div className="flex items-center gap-4">
@@ -147,19 +139,19 @@ const ColorGenerator: React.FC = () => {
                 className="h-12 w-12 rounded border-0 cursor-pointer"
               />
               <div className="relative flex items-center">
-                <span className="absolute left-3 text-gray-500 dark:text-gray-400">#</span>
+                <span className="absolute left-3 text-gray-500">#</span>
                 <input
                   type="text"
                   value={baseColor.slice(1)}
                   onChange={handleColorInputChange}
-                  className="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md pl-7 pr-3 py-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  className="bg-gray-50 border border-gray-300 rounded-md pl-7 pr-3 py-2 text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   maxLength={6}
                   pattern="[0-9a-fA-F]{6}"
                 />
               </div>
               <button 
                 onClick={handleRandomColor}
-                className="p-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center gap-1"
+                className="p-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 flex items-center gap-1"
                 aria-label="Generate random color"
               >
                 <RefreshCw size={16} />
@@ -169,11 +161,11 @@ const ColorGenerator: React.FC = () => {
           </div>
           
           <div>
-            <label htmlFor="paletteSize" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="paletteSize" className="block text-sm font-medium text-gray-700 mb-2">
               Palette Size: {paletteSize}
             </label>
             <div className="flex items-center gap-2">
-              <Sliders size={16} className="text-gray-500 dark:text-gray-400" />
+              <Sliders size={16} className="text-gray-500" />
               <input
                 type="range"
                 id="paletteSize"
@@ -181,14 +173,14 @@ const ColorGenerator: React.FC = () => {
                 max="50"
                 value={paletteSize}
                 onChange={handleSizeChange}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
               />
             </div>
           </div>
         </div>
 
         <div className="mt-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Palette Type
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -199,7 +191,7 @@ const ColorGenerator: React.FC = () => {
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   paletteType === type
                     ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
                 {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -210,7 +202,7 @@ const ColorGenerator: React.FC = () => {
       </div>
 
       <div className={`mt-8 transition-opacity duration-300 ${isGenerating ? 'opacity-50' : 'opacity-100'}`}>
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
           {paletteType.charAt(0).toUpperCase() + paletteType.slice(1)} Palette
         </h2>
         

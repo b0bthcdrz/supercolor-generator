@@ -50,7 +50,7 @@ const ColorSwatch: React.FC<ColorSwatchProps> = ({ color }) => {
         </button>
       </div>
       <div 
-        className="w-full py-2 px-3 text-center text-sm font-medium transition-colors"
+        className="w-full py-2 px-3 text-center text-sm font-medium"
         style={{ color: textColor }}
       >
         {color.toUpperCase()}
